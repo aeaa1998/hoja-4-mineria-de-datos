@@ -96,6 +96,24 @@ summary(fitLMP)
 
 #Multiple R-squared:      0.81,	Adjusted R-squared:      0.80
 
+predicted<-predict(fitLMP,newdata = test)
+test$prediccion <- predicted
+rmse(test$SalePrice,test$prediccion)
+#Nueva prediccion con todas las variables cuantitativas
+
+#Analisis de residuales con todas las variables
+residuales <- test$SalePrice-test$prediccion
+summary(residuales)
+print("Mean error de la prediccion y el test con todas las variables")
+abs(mean(test$SalePrice - prediction))
+print("Nos queda un error bastante bajo en los residuales dando tambien un buen modelo")
+plot(test$SalePrice, test$OverallQual)
+points(prediction, test$OverallQual, col="red",pch=15)
+par(mfrow = c(2,2))
+plot(fitLMP)
+
+#Analisis con solo las variables importatnes
+
 #Variables importantes 
 #MSSubClass
 #OverallQual
@@ -103,7 +121,7 @@ summary(fitLMP)
 #YearBuilt
 #MasVnrArea
 #X1stFlrSF
-#X1stFlrSF
+#X2ndFlrSF
 #BsmtFullBath
 #BedroomAbvGr
 #KitchenAbvGr
@@ -113,13 +131,76 @@ summary(fitLMP)
 #ScreenPorch
 
 
-predicted<-predict(fitLMP,newdata = test)
-
-test$prediccion <- predicted
-predicted
-confussionMatrix<-confusionMatrix(test$SalePrice,test$prediccion)
 
 
+#Set new model with only important variables
+train$LotFrontage = NULL
+train$LotArea = NULL
+train$YearRemodAdd = NULL
+train$BsmtFinSF1 = NULL
+train$BsmtFinSF2 = NULL
+train$BsmtUnfSF = NULL
+train$TotalBsmtSF = NULL
+train$LowQualFinSF = NULL
+train$GrLivArea = NULL
+train$BsmtHalfBath = NULL
+train$FullBath = NULL
+train$HalfBath = NULL
+train$GarageYrBlt = NULL
+train$GarageArea = NULL
+train$WoodDeckSF = NULL
+train$OpenPorchSF = NULL
+train$EnclosedPorch = NULL
+train$X3SsnPorch = NULL
+train$PoolArea = NULL
+train$MiscVal = NULL
+train$MoSold = NULL
+train$YrSold = NULL
 
+#Ver si hay overfitting
+
+fitCheckOV<-lm(SalePrice~., data = train)
+
+summary(fitCheckOV)
+
+
+
+#Get the correlation plot
+par(mfrow = c(1,1))
+corrplot(cor(train))
+
+#Remove overfititng values
+train$YearBuilt = NULL
+train$X1stFlrSF = NULL
+train$GarageCars = NULL
+train$TotRmsAbvGrd = NULL
+
+#Modelo sin overfitting
+train$OverallCond = NULL
+train$KitchenAbvGr = NULL
+train$BedroomAbvGr = NULL
+fitCheckNoOverfitting<-lm(SalePrice~., data = train)
+
+summary(fitCheckNoOverfitting)
+#Removemos nuevas variables sin imortancia
+
+par(mfrow = c(1,1))
+corrplot(cor(train))
+
+predicted<-predict(fitCheckNoOverfitting,newdata = test)
+test$new_prediccion <- predicted
+rmse(test$SalePrice,test$new_prediccion)
+#Nueva prediccion con todas las variables cuantitativas
+
+#Analisis de residuales con todas las variables
+residuales <- test$SalePrice-test$new_prediccion
+summary(residuales)
+print("Mean error de la prediccion y el test con todas las variables")
+abs(mean(test$SalePrice - prediction))
+print("Nos queda un error bastante bajo en los residuales dando tambien un buen modelo")
+plot(test$SalePrice, test$OverallQual)
+points(prediction, test$OverallQual, col="red",pch=15)
+par(mfrow = c(2,2))
+plot(fitLMP)
 
 
