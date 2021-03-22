@@ -203,4 +203,7 @@ points(prediction, test$OverallQual, col="red",pch=15)
 par(mfrow = c(2,2))
 plot(fitLMP)
 
-
+#Graficos de dispersion con variables selectivas
+fitMLM_SalePrice<-lm(SalePrice~.,data = datos[,c("GrLivArea","YearBuilt","BsmtUnfSF","TotalBsmtSF","GarageArea","YearRemodAdd", "SalePrice")])
+cat("SalePrice = ",round(fitMLM_SalePrice$coefficients[7],2), "YearRemodAdd + ", round(fitMLM_SalePrice$coefficients[6],2), "GarageArea + ", round(fitMLM_SalePrice$coefficients[5],2), "TotalBsmtSF", round(fitMLM_SalePrice$coefficients[4],2), "BsmtUnfSF + " , round(fitMLM_SalePrice$coefficients[3],2), "YearBuilt + ", round(fitMLM_SalePrice$coefficients[2],2), "GrLivArea", round(fitMLM_SalePrice$coefficients[1],2))
+plot(datos[,c("GrLivArea","YearBuilt","BsmtUnfSF","TotalBsmtSF","GarageArea","YearRemodAdd", "SalePrice")])
